@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "cu-tablist": "/colorui/components/cu-tablist"
+  }
+}

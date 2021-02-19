@@ -1,0 +1,1 @@
+<view class="container"><cu-custom vue-id="73adca00-1" bgColor="nav-bg" isBack="{{true}}" isShow="{{false}}" bind:__l="__l" vue-slots="{{['backText']}}"><view slot="backText">服务门店</view></cu-custom></view>

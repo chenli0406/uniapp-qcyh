@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "van-popup": "/wxcomponents/vant/dist/popup/index"
+  }
+}
