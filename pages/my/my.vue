@@ -84,12 +84,12 @@
 					{
 						name: '爱车档案',
 						imgPath: '../../static/icon/list-3.png',
-						url: '/pages/pagesB/promotion/promotion'
+						url: '/pages/pagesB/carFiles/carFiles'
 					},
 					{
 						name: '联系客服',
 						imgPath: '../../static/icon/list-4.png',
-						url: '/pages/pagesB/promotion/promotion'
+						url: '/pages/pagesB/contactService/contactService'
 					},
 					{
 						name: '关于我们',
@@ -99,12 +99,12 @@
 					{
 						name: '帮助中心',
 						imgPath: '../../static/icon/list-6.png',
-						url: '/pages/pagesB/promotion/promotion'
+						url: '/pages/pagesB/helpCenter/helpCenter'
 					},
 					{
 						name: '意见反馈',
 						imgPath: '../../static/icon/list-7.png',
-						url: '/pages/pagesB/promotion/promotion'
+						url: '/pages/pagesB/feedback/feedback'
 					},
 				]
 			}

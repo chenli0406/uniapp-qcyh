@@ -67,14 +67,14 @@
   height: 140rpx;
   border-radius: 10rpx;
 }
-.btn.data-v-78f2c337 {
+.btn1.data-v-78f2c337 {
   width: 100%;
   position: fixed;
   bottom: 0;
   background-color: #F5F8FB;
   text-align: center;
 }
-.btn .cu-btn.data-v-78f2c337 {
+.btn1 .cu-btn.data-v-78f2c337 {
   width: 90%;
   margin: 30rpx 0;
   border-radius: 40rpx;
@@ -96,5 +96,28 @@
   width: 36rpx;
   height: 36rpx;
   margin-right: 40rpx;
+}
+.from-box.data-v-78f2c337 {
+  padding: 20rpx 30rpx;
+}
+.from-box .btn.data-v-78f2c337 {
+  width: 100%;
+  bottom: 0;
+  text-align: center;
+}
+.from-box .btn .cu-btn.data-v-78f2c337 {
+  width: 90%;
+  margin: 30rpx 0;
+  border-radius: 40rpx;
+}
+.from-box .cu-form-group.data-v-78f2c337 {
+  background: #F5F8FB;
+  border-radius: 44rpx;
+  margin: 30rpx 0;
+  padding: 20rpx 40rpx;
+  min-height: auto;
+}
+.from-box .cu-form-group input.data-v-78f2c337 {
+  height: auto;
 }
 

@@ -2238,9 +2238,6 @@ to {
 	-webkit-justify-content: space-between;
 	        justify-content: space-between;
 }
-.cu-form-group+.cu-form-group {
-	border-top: 1rpx solid #eee;
-}
 .cu-form-group .title {
 	text-align: justify;
 	padding-right: 30rpx;
@@ -3272,7 +3269,7 @@ scroll-view.cu-steps .cu-item {
 }
 .bg-white {
 	background-color: #ffffff;
-	color: #666666;
+	color: #333;
 }
 .bg-shadeTop {
 	background-image: -webkit-linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.01));
@@ -3665,6 +3662,17 @@ scroll-view.cu-steps .cu-item {
 }
 .pad-b-20{
 	padding-bottom: 20rpx;
+}
+.ellipsis-d{
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+}
+.ellipsis-d3{
+	 display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	 overflow: hidden;
 }
 @-webkit-keyframes cuIcon-spin {
 0% {

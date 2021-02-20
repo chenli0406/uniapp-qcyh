@@ -93,8 +93,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components = {
-  vanPopup: function() {
-    return __webpack_require__.e(/*! import() | wxcomponents/vant/dist/popup/index */ "common/vendor").then(__webpack_require__.t.bind(null, /*! @/wxcomponents/vant/dist/popup/index */ 176, 7))
+  vanActionSheet: function() {
+    return __webpack_require__.e(/*! import() | wxcomponents/vant/dist/action-sheet/index */ "common/vendor").then(__webpack_require__.t.bind(null, /*! @/wxcomponents/vant/dist/action-sheet/index */ 183, 7))
   }
 }
 var render = function() {
@@ -269,12 +269,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 var _default =
 {
   data: function data() {
     return {
       state: '1',
-      show: false };
+      show: false,
+      from: {
+        name: '',
+        num: '' } };
+
 
   },
   methods: {
@@ -283,9 +292,36 @@ var _default =
         url: "/pages/pagesB/resultPage/resultPage?title=取消申请" });
 
     },
-    onClose: function onClose() {
-      console.log("1");
+    onHide: function onHide() {
       this.show = false;
+      this.from = {
+        name: '',
+        num: '' };
+
+    },
+    onSubmit: function onSubmit() {
+      if (this.from.name == '') {
+        uni.showToast({
+          title: '物流公司名称不能为空',
+          icon: 'none' });
+
+        return;
+      }
+      if (this.from.num == '') {
+        uni.showToast({
+          title: '物流单号不能为空',
+          icon: 'none' });
+
+        return;
+      }
+      // this.show = false;
+      return false;
+    },
+    // 联系客服
+    gotoContactService: function gotoContactService() {
+      uni.navigateTo({
+        url: '/pages/pagesB/contactService/contactService' });
+
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

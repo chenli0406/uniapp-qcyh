@@ -94,10 +94,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components = {
   vanSticky: function() {
-    return __webpack_require__.e(/*! import() | wxcomponents/vant/dist/sticky/index */ "common/vendor").then(__webpack_require__.t.bind(null, /*! @/wxcomponents/vant/dist/sticky/index */ 134, 7))
+    return __webpack_require__.e(/*! import() | wxcomponents/vant/dist/sticky/index */ "common/vendor").then(__webpack_require__.t.bind(null, /*! @/wxcomponents/vant/dist/sticky/index */ 172, 7))
   },
   vanDialog: function() {
-    return __webpack_require__.e(/*! import() | wxcomponents/vant/dist/dialog/index */ "common/vendor").then(__webpack_require__.t.bind(null, /*! @/wxcomponents/vant/dist/dialog/index */ 141, 7))
+    return __webpack_require__.e(/*! import() | wxcomponents/vant/dist/dialog/index */ "common/vendor").then(__webpack_require__.t.bind(null, /*! @/wxcomponents/vant/dist/dialog/index */ 179, 7))
   }
 }
 var render = function() {

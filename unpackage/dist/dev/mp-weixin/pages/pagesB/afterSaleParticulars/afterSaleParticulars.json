@@ -2,6 +2,6 @@
   "navigationBarTitleText": "",
   "enablePullDownRefresh": false,
   "usingComponents": {
-    "van-popup": "/wxcomponents/vant/dist/popup/index"
+    "van-action-sheet": "/wxcomponents/vant/dist/action-sheet/index"
   }
 }

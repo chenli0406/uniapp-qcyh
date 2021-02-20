@@ -1,0 +1,1 @@
+<view class="container data-v-9792c6ae"><cu-custom vue-id="5ac50d06-1" bgColor="nav-bg" isBack="{{true}}" isShow="{{true}}" class="data-v-9792c6ae" bind:__l="__l" vue-slots="{{['backText']}}"><view slot="backText" class="data-v-9792c6ae">问题详情</view></cu-custom><view class="content data-v-9792c6ae"></view></view>

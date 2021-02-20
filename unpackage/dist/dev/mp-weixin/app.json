@@ -22,7 +22,13 @@
         "order/order",
         "serveOrderList/serveOrderList",
         "afterSaleOrderList/afterSaleOrderList",
-        "resultPage/resultPage"
+        "resultPage/resultPage",
+        "contactService/contactService",
+        "helpCenter/helpCenter",
+        "helpCenterParticulars/helpCenterParticulars",
+        "carFiles/carFiles",
+        "addCard/addCard",
+        "feedback/feedback"
       ]
     }
   ],

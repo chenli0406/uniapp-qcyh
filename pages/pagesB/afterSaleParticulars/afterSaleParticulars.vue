@@ -112,19 +112,24 @@
 				</view>
 			</view>
 		</view>
-		<view class="flex-direction btn">
+		<view class="flex-direction btn1">
 			<button v-if="state == '2'" class="cu-btn bg-themeColor lg" @tap="cancelApply">取消申请</button>
-			<button v-if="state == '1'" class="cu-btn bg-themeColor lg" @tap="show = true">立即退货</button>
-			<button v-if="state == '2'" class="cu-btn bg-themeColor lg">联系客服</button>
+			<button v-if="state == '3'" class="cu-btn bg-themeColor lg" @tap="show = true">立即退货</button>
+			<button v-if="state == '1'" class="cu-btn bg-themeColor lg" @tap="gotoContactService">联系客服</button>
 		</view>
-		<van-popup
-		  :show="show"
-		  round
-		  position="bottom"
-		  custom-style="height: 40%"
-			:close-on-click-overlay="true"
-			@click-overlay="onClose"
-		/>
+		<van-action-sheet round :show="show" title="立即退货" bind:close="onHide">
+			<view class="from-box">
+				<view class="cu-form-group">
+					<input placeholder="请输入物流公司名称" v-model="from.name" name="input"></input>
+				</view>
+				<view class="cu-form-group">
+					<input placeholder="请输入物流单号" v-model="from.num" name="input"></input>
+				</view>
+				<view class="flex-direction btn">
+					<button class="cu-btn bg-themeColor lg" @tap="onSubmit">确认</button>
+				</view>
+			</view>
+		</van-action-sheet>
 	</view>
 </template>
 
@@ -133,21 +138,52 @@
 		data() {
 			return {
 				state: '1',
-				show: false
+				show: false,
+				from:{
+					name: '',
+					num: ''
+				}
 			};
 		},
 		methods: {
-     cancelApply(){
-			 uni.navigateTo({
-			 	url: "/pages/pagesB/resultPage/resultPage?title=取消申请"
-			 })
-		 },
-		 onClose(){
-		 	console.log("1")
-		 	this.show = false;
-		 }
+			cancelApply() {
+				uni.navigateTo({
+					url: "/pages/pagesB/resultPage/resultPage?title=取消申请"
+				})
+			},
+			onHide() {
+				this.show = false;
+				this.from={
+					name: '',
+					num: ''
+				}
+			},
+			onSubmit(){
+				if(this.from.name  == ''){
+					uni.showToast({
+					    title: '物流公司名称不能为空',
+							icon:'none',
+					});
+					return;
+				}
+				if(this.from.num  == ''){
+					uni.showToast({
+					    title: '物流单号不能为空',
+							icon:'none',
+					});
+					return;
+				}
+				// this.show = false;
+				return false;
+			},
+			// 联系客服
+			gotoContactService(){
+				uni.navigateTo({
+					url: '/pages/pagesB/contactService/contactService'
+				})
+			}
 		}
-		
+
 	}
 </script>
 
@@ -159,7 +195,6 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-
 			image {
 				width: 50rpx;
 				height: 50rpx;
@@ -193,13 +228,12 @@
 		}
 	}
 
-	.btn {
+	.btn1 {
 		width: 100%;
 		position: fixed;
 		bottom: 0;
 		background-color: #F5F8FB;
 		text-align: center;
-
 		.cu-btn {
 			width: 90%;
 			margin: 30rpx 0;
@@ -217,11 +251,36 @@
 			margin-right: 20rpx;
 		}
 	}
-	.info{
-		image{
+
+	.info {
+		image {
 			width: 36rpx;
 			height: 36rpx;
 			margin-right: 40rpx;
+		}
+	}
+
+	.from-box {
+		padding: 20rpx 30rpx;
+		.btn {
+			width: 100%;
+			bottom: 0;
+			text-align: center;
+			.cu-btn {
+				width: 90%;
+				margin: 30rpx 0;
+				border-radius: 40rpx;
+			}
+		}
+		.cu-form-group{
+			background: #F5F8FB;
+			border-radius: 44rpx;
+			margin: 30rpx 0;
+			padding: 20rpx 40rpx;
+			min-height: auto;
+			input{
+				height: auto;
+			}
 		}
 	}
 </style>

@@ -66,8 +66,50 @@
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "resultPage/resultPage",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "contactService/contactService",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "helpCenter/helpCenter",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "helpCenterParticulars/helpCenterParticulars",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "carFiles/carFiles",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "addCard/addCard",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
 		}    ,{
-                    "path" : "resultPage/resultPage",
+                    "path" : "feedback/feedback",
                     "style" :                                                                                    
                 {
                     "navigationBarTitleText": "",

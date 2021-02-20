@@ -2324,10 +2324,6 @@ button.cuIcon.lg {
 	justify-content: space-between;
 }
 
-.cu-form-group+.cu-form-group {
-	border-top: 1upx solid #eee;
-}
-
 .cu-form-group .title {
 	text-align: justify;
 	padding-right: 30upx;
@@ -3480,7 +3476,7 @@ scroll-view.cu-steps .cu-item {
 
 .bg-white {
 	background-color: #ffffff;
-	color: #666666;
+	color: #333;
 }
 
 .bg-shadeTop {
@@ -3946,4 +3942,16 @@ scroll-view.cu-steps .cu-item {
 }
 .pad-b-20{
 	padding-bottom: 20rpx;
+}
+.ellipsis-d{
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+}
+
+.ellipsis-d3{
+	 display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	 overflow: hidden;
 }

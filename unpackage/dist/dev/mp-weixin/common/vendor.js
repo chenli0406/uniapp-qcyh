@@ -904,7 +904,7 @@ function initData(vueOptions, context) {
     try {
       data = data.call(context); // 支持 Vue.prototype 上挂的数据
     } catch (e) {
-      if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.warn('根据 Vue 的 data 函数初始化小程序 data 失败，请尽量确保 data 函数中不访问 vm 对象，否则可能影响首次数据渲染速度。', data);
       }
     }
@@ -2042,7 +2042,209 @@ exports.getPresonId = getPresonId;var checkLogin = function checkLogin(data) {
 
 /***/ }),
 
-/***/ 115:
+/***/ 12:
+/*!******************************************************!*\
+  !*** E:/workProgram/uni-app/mp-qcyh/apis/request.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; /**
+                                                                                                      * 通用uni-app网络请求
+                                                                                                      * 基于 Promise 对象实现更简单的 request 使用方式，支持请求和响应拦截
+                                                                                                      */var _default =
+
+{
+  config: {
+    baseUrl: "http://127.0.0.1:666",
+    header: {
+      // 'Content-Type': 'application/json;charset=UTF-8',
+      'Content-Type': 'application/x-www-form-urlencoded' },
+
+    data: {},
+    method: "GET",
+    dataType: "json",
+    /* 如设为json，会对返回的数据做一次 JSON.parse */
+    responseType: "text",
+    success: function success() {},
+    fail: function fail() {},
+    complete: function complete() {} },
+
+  interceptor: {
+    request: null,
+    response: null },
+
+  request: function request(options) {var _this = this;
+    if (!options) {
+      options = {};
+    }
+    options.baseUrl = options.baseUrl || this.config.baseUrl;
+    options.dataType = options.dataType || this.config.dataType;
+    options.url = options.baseUrl + options.url;
+    options.data = options.data || {};
+    options.method = options.method || this.config.method;
+    options.header = options.header || this.config.header;
+    //TODO 加密数据
+
+    //TODO 数据签名
+    /* 
+    _token = {'token': getStorage(STOREKEY_LOGIN).token || 'undefined'},
+    _sign = {'sign': sign(JSON.stringify(options.data))}
+    options.header = Object.assign({}, options.header, _token,_sign) 
+    */
+    var token = "Bearer ".concat(uni.getStorageSync('token'));
+    var _token = { 'authorization': token };
+    if (_token != "") {
+      options.header = Object.assign({}, options.header, _token);
+    }
+    return new Promise(function (resolve, reject) {
+      var _config = null;
+      options.complete = function (response) {
+        var statusCode = response.statusCode;
+        response.config = _config;
+        if (statusCode === 200) {
+          console.log(JSON.stringify(response.data));
+        } else if (statusCode === 401) {
+          uni.showToast({
+            title: 'token不合法',
+            icon: 'none' });
+
+          uni.reLaunch({
+            url: '/pages/login/login' });
+
+        } else
+        if (statusCode === 400) {
+          uni.showToast({
+            title: '请求超时',
+            icon: 'none' });
+
+        } else
+        if (statusCode === 500) {
+          uni.showToast({
+            title: '服务器错误',
+            icon: 'none' });
+
+        } else {
+          uni.showToast({
+            title: '网络错误',
+            icon: 'none' });
+
+        }
+        if (_this.interceptor.response) {
+          var newResponse = _this.interceptor.response(response);
+          if (newResponse) {
+            response = newResponse;
+          }
+        }
+        // 统一的响应日志记录
+        // _reslog(response)
+        if (statusCode === 200) {//成功
+          resolve(response);
+        } else {
+          reject(response);
+        }
+      };
+
+      _config = Object.assign({}, _this.config, options);
+      _config.requestId = new Date().getTime();
+
+      if (_this.interceptor.request) {
+        _this.interceptor.request(_config);
+      }
+
+      // 统一的请求日志记录
+      // _reqlog(_config)
+      // if (process.env.NODE_ENV === 'development') {
+      // 	  console.log("【" + _config.requestId + "】 地址：" + _config.url)
+      // 	if (_config.data) {
+      // 		console.log("【" + _config.requestId + "】 参数：" + JSON.stringify(_config.data))
+      // 	}
+      // }
+
+      uni.request(_config);
+    });
+  },
+  get: function get(url, data, options) {
+    if (!options) {
+      options = {};
+    }
+    options.url = url;
+    options.data = data;
+    options.method = 'GET';
+    return this.request(options);
+  },
+  post: function post(url, data, options) {
+    if (!options) {
+      options = {};
+    }
+    options.url = url;
+    options.data = data;
+    options.method = 'POST';
+    return this.request(options);
+  },
+  put: function put(url, data, options) {
+    if (!options) {
+      options = {};
+    }
+    options.url = url;
+    options.data = data;
+    options.method = 'PUT';
+    return this.request(options);
+  },
+  delete: function _delete(url, data, options) {
+    if (!options) {
+      options = {};
+    }
+    options.url = url;
+    options.data = data;
+    options.method = 'DELETE';
+    return this.request(options);
+  } };
+
+
+/**
+        * 请求接口日志记录
+        */exports.default = _default;
+function _reqlog(req) {
+  if (true) {
+    console.log("【" + req.requestId + "】 地址：" + req.url);
+    if (req.data) {
+      console.log("【" + req.requestId + "】 请求参数：" + JSON.stringify(req.data));
+    }
+  }
+  //TODO 调接口异步写入日志数据库
+}
+
+/**
+   * 响应接口日志记录
+   */
+function _reslog(res) {
+  var _statusCode = res.statusCode;
+  if (true) {
+    console.log("【" + res.config.requestId + "】 地址：" + res.config.url);
+    if (res.config.data) {
+      console.log("【" + res.config.requestId + "】 请求参数：" + JSON.stringify(res.config.data));
+    }
+    console.log("【" + res.config.requestId + "】 响应结果：" + JSON.stringify(res));
+  }
+  //TODO 除了接口服务错误外，其他日志调接口异步写入日志数据库
+  switch (_statusCode) {
+    case 200:
+      break;
+    case 401:
+      break;
+    case 404:
+      break;
+    default:
+      break;}
+
+}
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 153:
 /*!******************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/components/mescroll-uni/mescroll-uni.js ***!
   \******************************************************************************/
@@ -2853,7 +3055,7 @@ MeScroll.prototype.preventDefault = function (e) {
 
 /***/ }),
 
-/***/ 116:
+/***/ 154:
 /*!*************************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/components/mescroll-uni/mescroll-uni-option.js ***!
   \*************************************************************************************/
@@ -2900,7 +3102,7 @@ GlobalOption;exports.default = _default;
 
 /***/ }),
 
-/***/ 117:
+/***/ 155:
 /*!****************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/components/mescroll-uni/wxs/mixins.js ***!
   \****************************************************************************/
@@ -3020,209 +3222,7 @@ WxsMixin;exports.default = _default;
 
 /***/ }),
 
-/***/ 12:
-/*!******************************************************!*\
-  !*** E:/workProgram/uni-app/mp-qcyh/apis/request.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; /**
-                                                                                                      * 通用uni-app网络请求
-                                                                                                      * 基于 Promise 对象实现更简单的 request 使用方式，支持请求和响应拦截
-                                                                                                      */var _default =
-
-{
-  config: {
-    baseUrl: "http://127.0.0.1:666",
-    header: {
-      // 'Content-Type': 'application/json;charset=UTF-8',
-      'Content-Type': 'application/x-www-form-urlencoded' },
-
-    data: {},
-    method: "GET",
-    dataType: "json",
-    /* 如设为json，会对返回的数据做一次 JSON.parse */
-    responseType: "text",
-    success: function success() {},
-    fail: function fail() {},
-    complete: function complete() {} },
-
-  interceptor: {
-    request: null,
-    response: null },
-
-  request: function request(options) {var _this = this;
-    if (!options) {
-      options = {};
-    }
-    options.baseUrl = options.baseUrl || this.config.baseUrl;
-    options.dataType = options.dataType || this.config.dataType;
-    options.url = options.baseUrl + options.url;
-    options.data = options.data || {};
-    options.method = options.method || this.config.method;
-    options.header = options.header || this.config.header;
-    //TODO 加密数据
-
-    //TODO 数据签名
-    /* 
-    _token = {'token': getStorage(STOREKEY_LOGIN).token || 'undefined'},
-    _sign = {'sign': sign(JSON.stringify(options.data))}
-    options.header = Object.assign({}, options.header, _token,_sign) 
-    */
-    var token = "Bearer ".concat(uni.getStorageSync('token'));
-    var _token = { 'authorization': token };
-    if (_token != "") {
-      options.header = Object.assign({}, options.header, _token);
-    }
-    return new Promise(function (resolve, reject) {
-      var _config = null;
-      options.complete = function (response) {
-        var statusCode = response.statusCode;
-        response.config = _config;
-        if (statusCode === 200) {
-          console.log(JSON.stringify(response.data));
-        } else if (statusCode === 401) {
-          uni.showToast({
-            title: 'token不合法',
-            icon: 'none' });
-
-          uni.reLaunch({
-            url: '/pages/login/login' });
-
-        } else
-        if (statusCode === 400) {
-          uni.showToast({
-            title: '请求超时',
-            icon: 'none' });
-
-        } else
-        if (statusCode === 500) {
-          uni.showToast({
-            title: '服务器错误',
-            icon: 'none' });
-
-        } else {
-          uni.showToast({
-            title: '网络错误',
-            icon: 'none' });
-
-        }
-        if (_this.interceptor.response) {
-          var newResponse = _this.interceptor.response(response);
-          if (newResponse) {
-            response = newResponse;
-          }
-        }
-        // 统一的响应日志记录
-        // _reslog(response)
-        if (statusCode === 200) {//成功
-          resolve(response);
-        } else {
-          reject(response);
-        }
-      };
-
-      _config = Object.assign({}, _this.config, options);
-      _config.requestId = new Date().getTime();
-
-      if (_this.interceptor.request) {
-        _this.interceptor.request(_config);
-      }
-
-      // 统一的请求日志记录
-      // _reqlog(_config)
-      // if (process.env.NODE_ENV === 'development') {
-      // 	  console.log("【" + _config.requestId + "】 地址：" + _config.url)
-      // 	if (_config.data) {
-      // 		console.log("【" + _config.requestId + "】 参数：" + JSON.stringify(_config.data))
-      // 	}
-      // }
-
-      uni.request(_config);
-    });
-  },
-  get: function get(url, data, options) {
-    if (!options) {
-      options = {};
-    }
-    options.url = url;
-    options.data = data;
-    options.method = 'GET';
-    return this.request(options);
-  },
-  post: function post(url, data, options) {
-    if (!options) {
-      options = {};
-    }
-    options.url = url;
-    options.data = data;
-    options.method = 'POST';
-    return this.request(options);
-  },
-  put: function put(url, data, options) {
-    if (!options) {
-      options = {};
-    }
-    options.url = url;
-    options.data = data;
-    options.method = 'PUT';
-    return this.request(options);
-  },
-  delete: function _delete(url, data, options) {
-    if (!options) {
-      options = {};
-    }
-    options.url = url;
-    options.data = data;
-    options.method = 'DELETE';
-    return this.request(options);
-  } };
-
-
-/**
-        * 请求接口日志记录
-        */exports.default = _default;
-function _reqlog(req) {
-  if (true) {
-    console.log("【" + req.requestId + "】 地址：" + req.url);
-    if (req.data) {
-      console.log("【" + req.requestId + "】 请求参数：" + JSON.stringify(req.data));
-    }
-  }
-  //TODO 调接口异步写入日志数据库
-}
-
-/**
-   * 响应接口日志记录
-   */
-function _reslog(res) {
-  var _statusCode = res.statusCode;
-  if (true) {
-    console.log("【" + res.config.requestId + "】 地址：" + res.config.url);
-    if (res.config.data) {
-      console.log("【" + res.config.requestId + "】 请求参数：" + JSON.stringify(res.config.data));
-    }
-    console.log("【" + res.config.requestId + "】 响应结果：" + JSON.stringify(res));
-  }
-  //TODO 除了接口服务错误外，其他日志调接口异步写入日志数据库
-  switch (_statusCode) {
-    case 200:
-      break;
-    case 401:
-      break;
-    case 404:
-      break;
-    default:
-      break;}
-
-}
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 134:
+/***/ 172:
 /*!*****************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/sticky/index.js ***!
   \*****************************************************************************/
@@ -3230,9 +3230,9 @@ function _reslog(res) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-var _utils = __webpack_require__(/*! ../common/utils */ 135);
-var _component = __webpack_require__(/*! ../common/component */ 138);
-var _pageScroll = __webpack_require__(/*! ../mixins/page-scroll */ 140);function _slicedToArray(arr, i) {return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();}function _nonIterableRest() {throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}function _iterableToArrayLimit(arr, i) {if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"] != null) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}function _arrayWithHoles(arr) {if (Array.isArray(arr)) return arr;}
+var _utils = __webpack_require__(/*! ../common/utils */ 173);
+var _component = __webpack_require__(/*! ../common/component */ 176);
+var _pageScroll = __webpack_require__(/*! ../mixins/page-scroll */ 178);function _slicedToArray(arr, i) {return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();}function _nonIterableRest() {throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}function _iterableToArrayLimit(arr, i) {if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"] != null) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}function _arrayWithHoles(arr) {if (Array.isArray(arr)) return arr;}
 var ROOT_ELEMENT = '.van-sticky';
 (0, _component.VantComponent)({
   props: {
@@ -3344,7 +3344,7 @@ var ROOT_ELEMENT = '.van-sticky';
 
 /***/ }),
 
-/***/ 135:
+/***/ 173:
 /*!*****************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/common/utils.js ***!
   \*****************************************************************************/
@@ -3352,8 +3352,8 @@ var ROOT_ELEMENT = '.van-sticky';
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.range = range;exports.nextTick = nextTick;exports.getSystemInfoSync = getSystemInfoSync;exports.addUnit = addUnit;exports.requestAnimationFrame = requestAnimationFrame;exports.pickExclude = pickExclude;exports.getRect = getRect;exports.getAllRect = getAllRect;exports.groupSetData = groupSetData;exports.toPromise = toPromise;exports.getCurrentPage = getCurrentPage;var _validator = __webpack_require__(/*! ./validator */ 136);
-var _version = __webpack_require__(/*! ./version */ 137);
+Object.defineProperty(exports, "__esModule", { value: true });exports.range = range;exports.nextTick = nextTick;exports.getSystemInfoSync = getSystemInfoSync;exports.addUnit = addUnit;exports.requestAnimationFrame = requestAnimationFrame;exports.pickExclude = pickExclude;exports.getRect = getRect;exports.getAllRect = getAllRect;exports.groupSetData = groupSetData;exports.toPromise = toPromise;exports.getCurrentPage = getCurrentPage;var _validator = __webpack_require__(/*! ./validator */ 174);
+var _version = __webpack_require__(/*! ./version */ 175);
 function range(num, min, max) {
   return Math.min(Math.max(num, min), max);
 }
@@ -3444,7 +3444,7 @@ function getCurrentPage() {
 
 /***/ }),
 
-/***/ 136:
+/***/ 174:
 /*!*********************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/common/validator.js ***!
   \*********************************************************************************/
@@ -3485,7 +3485,7 @@ function isVideoUrl(url) {
 
 /***/ }),
 
-/***/ 137:
+/***/ 175:
 /*!*******************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/common/version.js ***!
   \*******************************************************************************/
@@ -3493,7 +3493,7 @@ function isVideoUrl(url) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.canIUseModel = canIUseModel;exports.canIUseFormFieldButton = canIUseFormFieldButton;exports.canIUseAnimate = canIUseAnimate;exports.canIUseGroupSetData = canIUseGroupSetData;exports.canIUseNextTick = canIUseNextTick;var _utils = __webpack_require__(/*! ./utils */ 135);
+Object.defineProperty(exports, "__esModule", { value: true });exports.canIUseModel = canIUseModel;exports.canIUseFormFieldButton = canIUseFormFieldButton;exports.canIUseAnimate = canIUseAnimate;exports.canIUseGroupSetData = canIUseGroupSetData;exports.canIUseNextTick = canIUseNextTick;var _utils = __webpack_require__(/*! ./utils */ 173);
 function compareVersion(v1, v2) {
   v1 = v1.split('.');
   v2 = v2.split('.');
@@ -3538,7 +3538,7 @@ function canIUseNextTick() {
 
 /***/ }),
 
-/***/ 138:
+/***/ 176:
 /*!*********************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/common/component.js ***!
   \*********************************************************************************/
@@ -3546,7 +3546,7 @@ function canIUseNextTick() {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.VantComponent = VantComponent;var _basic = __webpack_require__(/*! ../mixins/basic */ 139);
+Object.defineProperty(exports, "__esModule", { value: true });exports.VantComponent = VantComponent;var _basic = __webpack_require__(/*! ../mixins/basic */ 177);
 function mapKeys(source, target, map) {
   Object.keys(map).forEach(function (key) {
     if (source[key]) {
@@ -3593,7 +3593,7 @@ function VantComponent(vantOptions) {
 
 /***/ }),
 
-/***/ 139:
+/***/ 177:
 /*!*****************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/mixins/basic.js ***!
   \*****************************************************************************/
@@ -3613,7 +3613,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.basic = vo
 
 /***/ }),
 
-/***/ 140:
+/***/ 178:
 /*!***********************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/mixins/page-scroll.js ***!
   \***********************************************************************************/
@@ -3621,7 +3621,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.basic = vo
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.pageScrollMixin = void 0;var _utils = __webpack_require__(/*! ../common/utils */ 135);
+Object.defineProperty(exports, "__esModule", { value: true });exports.pageScrollMixin = void 0;var _utils = __webpack_require__(/*! ../common/utils */ 173);
 function onPageScroll(event) {var _getCurrentPage =
   (0, _utils.getCurrentPage)(),_getCurrentPage$vanPa = _getCurrentPage.vanPageScroller,vanPageScroller = _getCurrentPage$vanPa === void 0 ? [] : _getCurrentPage$vanPa;
   vanPageScroller.forEach(function (scroller) {
@@ -3656,7 +3656,7 @@ var pageScrollMixin = function pageScrollMixin(scroller) {return (
 
 /***/ }),
 
-/***/ 141:
+/***/ 179:
 /*!*****************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/dialog/index.js ***!
   \*****************************************************************************/
@@ -3664,11 +3664,11 @@ var pageScrollMixin = function pageScrollMixin(scroller) {return (
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-var _component = __webpack_require__(/*! ../common/component */ 138);
-var _button = __webpack_require__(/*! ../mixins/button */ 142);
-var _openType = __webpack_require__(/*! ../mixins/open-type */ 143);
-var _color = __webpack_require__(/*! ../common/color */ 144);
-var _utils = __webpack_require__(/*! ../common/utils */ 135);function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
+var _component = __webpack_require__(/*! ../common/component */ 176);
+var _button = __webpack_require__(/*! ../mixins/button */ 180);
+var _openType = __webpack_require__(/*! ../mixins/open-type */ 181);
+var _color = __webpack_require__(/*! ../common/color */ 182);
+var _utils = __webpack_require__(/*! ../common/utils */ 173);function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 (0, _component.VantComponent)({
   mixins: [_button.button, _openType.openType],
   props: {
@@ -3787,7 +3787,7 @@ var _utils = __webpack_require__(/*! ../common/utils */ 135);function _definePro
 
 /***/ }),
 
-/***/ 142:
+/***/ 180:
 /*!******************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/mixins/button.js ***!
   \******************************************************************************/
@@ -3811,7 +3811,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.button = v
 
 /***/ }),
 
-/***/ 143:
+/***/ 181:
 /*!*********************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/mixins/open-type.js ***!
   \*********************************************************************************/
@@ -3846,7 +3846,7 @@ var openType = Behavior({
 
 /***/ }),
 
-/***/ 144:
+/***/ 182:
 /*!*****************************************************************************!*\
   !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/common/color.js ***!
   \*****************************************************************************/
@@ -3864,222 +3864,74 @@ var GRAY_DARK = '#969799';exports.GRAY_DARK = GRAY_DARK;
 
 /***/ }),
 
-/***/ 176:
-/*!****************************************************************************!*\
-  !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/popup/index.js ***!
-  \****************************************************************************/
+/***/ 183:
+/*!***********************************************************************************!*\
+  !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/action-sheet/index.js ***!
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-var _component = __webpack_require__(/*! ../common/component */ 138);
-var _transition = __webpack_require__(/*! ../mixins/transition */ 177);
+var _component = __webpack_require__(/*! ../common/component */ 176);
+var _button = __webpack_require__(/*! ../mixins/button */ 180);
+var _openType = __webpack_require__(/*! ../mixins/open-type */ 181);
 (0, _component.VantComponent)({
-  classes: [
-  'enter-class',
-  'enter-active-class',
-  'enter-to-class',
-  'leave-class',
-  'leave-active-class',
-  'leave-to-class',
-  'close-icon-class'],
-
-  mixins: [(0, _transition.transition)(false)],
+  mixins: [_button.button, _openType.openType],
   props: {
-    round: Boolean,
-    closeable: Boolean,
-    customStyle: String,
-    overlayStyle: String,
-    transition: {
-      type: String,
-      observer: 'observeClass' },
+    show: Boolean,
+    title: String,
+    cancelText: String,
+    description: String,
+    round: {
+      type: Boolean,
+      value: true },
 
     zIndex: {
       type: Number,
       value: 100 },
 
+    actions: {
+      type: Array,
+      value: [] },
+
     overlay: {
       type: Boolean,
       value: true },
-
-    closeIcon: {
-      type: String,
-      value: 'cross' },
-
-    closeIconPosition: {
-      type: String,
-      value: 'top-right' },
 
     closeOnClickOverlay: {
       type: Boolean,
       value: true },
 
-    position: {
-      type: String,
-      value: 'center',
-      observer: 'observeClass' },
-
-    safeAreaInsetBottom: {
+    closeOnClickAction: {
       type: Boolean,
       value: true },
 
-    safeAreaInsetTop: {
+    safeAreaInsetBottom: {
       type: Boolean,
-      value: false } },
+      value: true } },
 
 
-  created: function created() {
-    this.observeClass();
-  },
   methods: {
-    onClickCloseIcon: function onClickCloseIcon() {
+    onSelect: function onSelect(event) {var
+      index = event.currentTarget.dataset.index;
+      var item = this.data.actions[index];
+      if (item && !item.disabled && !item.loading) {
+        this.$emit('select', item);
+        if (this.data.closeOnClickAction) {
+          this.onClose();
+        }
+      }
+    },
+    onCancel: function onCancel() {
+      this.$emit('cancel');
+    },
+    onClose: function onClose() {
       this.$emit('close');
     },
     onClickOverlay: function onClickOverlay() {
       this.$emit('click-overlay');
-      if (this.data.closeOnClickOverlay) {
-        this.$emit('close');
-      }
-    },
-    observeClass: function observeClass() {var _this$data =
-      this.data,transition = _this$data.transition,position = _this$data.position,duration = _this$data.duration;
-      var updateData = {
-        name: transition || position };
-
-      if (transition === 'none') {
-        updateData.duration = 0;
-        this.originDuration = duration;
-      } else if (this.originDuration != null) {
-        updateData.duration = this.originDuration;
-      }
-      this.setData(updateData);
+      this.onClose();
     } } });
-
-/***/ }),
-
-/***/ 177:
-/*!**********************************************************************************!*\
-  !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/mixins/transition.js ***!
-  \**********************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.transition = transition;
-var _utils = __webpack_require__(/*! ../common/utils */ 135);
-var _validator = __webpack_require__(/*! ../common/validator */ 136); // @ts-nocheck
-var getClassNames = function getClassNames(name) {return {
-    enter: "van-".concat(name, "-enter van-").concat(name, "-enter-active enter-class enter-active-class"),
-    'enter-to': "van-".concat(name, "-enter-to van-").concat(name, "-enter-active enter-to-class enter-active-class"),
-    leave: "van-".concat(name, "-leave van-").concat(name, "-leave-active leave-class leave-active-class"),
-    'leave-to': "van-".concat(name, "-leave-to van-").concat(name, "-leave-active leave-to-class leave-active-class") };};
-
-function transition(showDefaultValue) {
-  return Behavior({
-    properties: {
-      customStyle: String,
-      // @ts-ignore
-      show: {
-        type: Boolean,
-        value: showDefaultValue,
-        observer: 'observeShow' },
-
-      // @ts-ignore
-      duration: {
-        type: null,
-        value: 300,
-        observer: 'observeDuration' },
-
-      name: {
-        type: String,
-        value: 'fade' } },
-
-
-    data: {
-      type: '',
-      inited: false,
-      display: false },
-
-    ready: function ready() {
-      if (this.data.show === true) {
-        this.observeShow(true, false);
-      }
-    },
-    methods: {
-      observeShow: function observeShow(value, old) {
-        if (value === old) {
-          return;
-        }
-        value ? this.enter() : this.leave();
-      },
-      enter: function enter() {var _this = this;var _this$data =
-        this.data,duration = _this$data.duration,name = _this$data.name;
-        var classNames = getClassNames(name);
-        var currentDuration = (0, _validator.isObj)(duration) ? duration.enter : duration;
-        this.status = 'enter';
-        this.$emit('before-enter');
-        (0, _utils.requestAnimationFrame)(function () {
-          if (_this.status !== 'enter') {
-            return;
-          }
-          _this.$emit('enter');
-          _this.setData({
-            inited: true,
-            display: true,
-            classes: classNames.enter,
-            currentDuration: currentDuration });
-
-          (0, _utils.requestAnimationFrame)(function () {
-            if (_this.status !== 'enter') {
-              return;
-            }
-            _this.transitionEnded = false;
-            _this.setData({ classes: classNames['enter-to'] });
-          });
-        });
-      },
-      leave: function leave() {var _this2 = this;
-        if (!this.data.display) {
-          return;
-        }var _this$data2 =
-        this.data,duration = _this$data2.duration,name = _this$data2.name;
-        var classNames = getClassNames(name);
-        var currentDuration = (0, _validator.isObj)(duration) ? duration.leave : duration;
-        this.status = 'leave';
-        this.$emit('before-leave');
-        (0, _utils.requestAnimationFrame)(function () {
-          if (_this2.status !== 'leave') {
-            return;
-          }
-          _this2.$emit('leave');
-          _this2.setData({
-            classes: classNames.leave,
-            currentDuration: currentDuration });
-
-          (0, _utils.requestAnimationFrame)(function () {
-            if (_this2.status !== 'leave') {
-              return;
-            }
-            _this2.transitionEnded = false;
-            setTimeout(function () {return _this2.onTransitionEnd();}, currentDuration);
-            _this2.setData({ classes: classNames['leave-to'] });
-          });
-        });
-      },
-      onTransitionEnd: function onTransitionEnd() {
-        if (this.transitionEnded) {
-          return;
-        }
-        this.transitionEnded = true;
-        this.$emit("after-".concat(this.status));var _this$data3 =
-        this.data,show = _this$data3.show,display = _this$data3.display;
-        if (!show && display) {
-          this.setData({ display: false });
-        }
-      } } });
-
-
-}
 
 /***/ }),
 
@@ -9609,7 +9461,7 @@ function type(obj) {
 
 function flushCallbacks$1(vm) {
     if (vm.__next_tick_callbacks && vm.__next_tick_callbacks.length) {
-        if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+        if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:flushCallbacks[' + vm.__next_tick_callbacks.length + ']');
@@ -9630,14 +9482,14 @@ function nextTick$1(vm, cb) {
     //1.nextTick 之前 已 setData 且 setData 还未回调完成
     //2.nextTick 之前存在 render watcher
     if (!vm.__next_tick_pending && !hasRenderWatcher(vm)) {
-        if(Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:nextVueTick');
         }
         return nextTick(cb, vm)
     }else{
-        if(Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance$1 = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance$1.is || mpInstance$1.route) + '][' + vm._uid +
                 ']:nextMPTick');
@@ -9723,7 +9575,7 @@ var patch = function(oldVnode, vnode) {
     });
     var diffData = this.$shouldDiffData === false ? data : diff(data, mpData);
     if (Object.keys(diffData).length) {
-      if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + this._uid +
           ']差量更新',
           JSON.stringify(diffData));
@@ -10127,6 +9979,51 @@ internalMixin(Vue);
 /* harmony default export */ __webpack_exports__["default"] = (Vue);
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../webpack/buildin/global.js */ 3)))
+
+/***/ }),
+
+/***/ 216:
+/*!*****************************************************************************!*\
+  !*** E:/workProgram/uni-app/mp-qcyh/wxcomponents/vant/dist/switch/index.js ***!
+  \*****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var _component = __webpack_require__(/*! ../common/component */ 176);
+(0, _component.VantComponent)({
+  field: true,
+  classes: ['node-class'],
+  props: {
+    checked: null,
+    loading: Boolean,
+    disabled: Boolean,
+    activeColor: String,
+    inactiveColor: String,
+    size: {
+      type: String,
+      value: '30' },
+
+    activeValue: {
+      type: null,
+      value: true },
+
+    inactiveValue: {
+      type: null,
+      value: false } },
+
+
+  methods: {
+    onClick: function onClick() {var _this$data =
+      this.data,activeValue = _this$data.activeValue,inactiveValue = _this$data.inactiveValue,disabled = _this$data.disabled,loading = _this$data.loading;
+      if (disabled || loading) {
+        return;
+      }
+      var checked = this.data.checked === activeValue;
+      var value = checked ? inactiveValue : activeValue;
+      this.$emit('input', value);
+      this.$emit('change', value);
+    } } });
 
 /***/ }),
 
